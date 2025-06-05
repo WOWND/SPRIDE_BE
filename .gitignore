@@ -39,3 +39,5 @@ out/
 **/InitDB.java
 application.yml
 !application-example.yml
+
+**/test/
