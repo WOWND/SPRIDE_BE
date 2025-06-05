@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/sprideapp
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+kakao:
+  client_id: your_client_id
+  redirect_uri: your_redirect_uri
+jwt:
+  secret: jwt-secret
+app:
+  frontend-url: frontend-url
+  backend-url: backend-url
