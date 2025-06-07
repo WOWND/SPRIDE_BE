@@ -1,4 +1,4 @@
-package sprideapp.spride.member.auth.kakao;
+package sprideapp.spride.member.auth.kakao.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

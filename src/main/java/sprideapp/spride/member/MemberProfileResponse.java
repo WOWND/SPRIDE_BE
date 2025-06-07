@@ -10,13 +10,15 @@ public class MemberProfileResponse {
     public int score;
     public String profileUrl;
     public Level level;
+    public String introText;
 
     public static MemberProfileResponse from(Member member) {
         return new MemberProfileResponse(
                 member.getNickname(),
                 member.getScore(),
                 member.getProfileUrl(),
-                member.getLevel()
+                member.getLevel(),
+                member.getIntroText()
         );
     }
 }

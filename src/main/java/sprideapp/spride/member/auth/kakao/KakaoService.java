@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+import sprideapp.spride.exception.SignupRequiredException;
 import sprideapp.spride.member.Member;
 import sprideapp.spride.member.MemberRepository;
+import sprideapp.spride.member.auth.kakao.dto.*;
 import sprideapp.spride.security.JwtProvider;
 
 import java.util.Optional;
@@ -19,11 +21,14 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class KakaoService {
+
     @Value("${kakao.client_id}")
     private String clientId;
 
     @Value("${app.domain}")
     private String serverUrl;
+
+
 
     private final MemberRepository memberRepository;
     private final JwtProvider jwtProvider;
@@ -73,7 +78,7 @@ public class KakaoService {
 
         //기본 프사라면 우리의 기본 프사를 등록
         if (userInfo.getKakaoAccount().getProfile().getIsDefaultImage()) {
-            userInfo.getKakaoAccount().getProfile().setProfileImageUrl(serverUrl + "/images/profile/default_image.jpg");
+            //userInfo.getKakaoAccount().getProfile().setProfileImageUrl(serverUrl + "/images/profile/default_image.jpg");
         }
         log.info("[ getUserInfo ] Auth ID ---> {} ", userInfo.getId());
         log.info("[ getUserInfo ] NickName ---> {} ", userInfo.getKakaoAccount().getProfile().getNickName());
@@ -83,7 +88,8 @@ public class KakaoService {
     }
 
     //로그인
-    public void login(String code) {
+    public LoginResult login(String code) {
+        log.info("==============================={}",code);
         String kakaoAccessToken = getAccessTokenFromKakao(code);
         KakaoUserInfoResponse userInfo = getUserInfo(kakaoAccessToken);
 
@@ -92,12 +98,13 @@ public class KakaoService {
         Optional<Member> existingMember = memberRepository.findByKakaoId(kakaoId);
         if (existingMember.isPresent()) { //기존 회원
             Member member = existingMember.get();
-
             String accessToken = jwtProvider.createAccessToken(member.getId());
-            //String refreshToken = jwtProvider.createRefreshToken(member.getId());
-            return LoginResponse.from(member, accessToken);
+            String refreshToken = jwtProvider.createAccessToken(member.getId());
 
-        } else {
+            LoginResponse response = LoginResponse.from(member);
+
+            return new LoginResult(accessToken, refreshToken, response);
+        } else { //회원 가입 필요
             String temporaryToken = jwtProvider.createTemporaryToken(kakaoId);
             throw new SignupRequiredException(temporaryToken,
                     userInfo.getKakaoAccount().getProfile().getNickName(),
@@ -108,7 +115,13 @@ public class KakaoService {
 
 
     //회원가입
-    public void signup() {
+    public LoginResult signup(KakaoSignupRequest request, Long kakaoId) {
+        Member member = memberRepository.save(request.toEntity(kakaoId));
 
+        String accessToken = jwtProvider.createAccessToken(member.getId());
+        String refreshToken = jwtProvider.createAccessToken(member.getId());
+        LoginResponse response = LoginResponse.from(member);
+
+        return new LoginResult(accessToken, refreshToken, response);
     }
 }

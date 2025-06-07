@@ -37,11 +37,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = getTokenFromRequest(request);
         log.info("요청 받은 토큰{}", token);
 
-        //회원가입은 임시토큰 발급
+        //회원가입은 임시토큰
         if (path.equals("/api/auth/kakao/signup")) {
             if (token == null || !"temp".equals(jwtProvider.getTokenType(token)) || !jwtProvider.validateToken(token, "temp")) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("접근할 수 있습니다.");
+                response.getWriter().write("임시 토큰으로만 접근할 수 있습니다.");
                 return;
             }
             Long kakaoId = jwtProvider.getIdFromToken(token);
@@ -72,6 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //        return null;
 //    }
 
+    //쿠키에서 토큰 꺼내기
     private String getTokenFromRequest(HttpServletRequest request) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
