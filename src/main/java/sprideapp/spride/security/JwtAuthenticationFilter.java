@@ -29,13 +29,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
 
-        if (path.startsWith("/swagger-ui") || path.endsWith("/login") || path.equals("/api/members/exists") || path.equals("/api/members/signup") || path.startsWith("/images/")) {
+        if (path.startsWith("/swagger-ui") || path.endsWith("/login") || path.startsWith("/images/")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String token = getTokenFromRequest(request);
         log.info("요청 받은 토큰{}", token);
+
+
+
+        if (path.equals("/api/auth/kakao/me")) {
+            if (token == null || !"access".equals(jwtProvider.getTokenType(token)) || !jwtProvider.validateToken(token, "access")) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Access token이 없거나 만료되었습니다.");
+                return;
+            }
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 
         //회원가입은 임시토큰
         if (path.equals("/api/auth/kakao/signup")) {

@@ -29,4 +29,8 @@ public class Member {
         this.kakaoId = kakaoId;
         this.level = Level.BRONZE;
     }
+
+    public void uploadProfileImage(String imageUrl) {
+        this.profileUrl = imageUrl;
+    }
 }

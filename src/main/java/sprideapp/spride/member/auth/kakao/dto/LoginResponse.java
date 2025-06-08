@@ -9,7 +9,7 @@ import sprideapp.spride.member.Member;
 @Getter
 @Builder
 public class LoginResponse {
-    private String status = "LOGIN_SUCCESS";
+    private String status;
     private String nickname;
     private String profileUrl;
     private String introText;
@@ -18,6 +18,7 @@ public class LoginResponse {
 
     public static LoginResponse from(Member member) {
         return LoginResponse.builder()
+                .status("LOGIN_SUCCESS")
                 .nickname(member.getNickname())
                 .profileUrl(member.getProfileUrl())
                 .introText(member.getIntroText())

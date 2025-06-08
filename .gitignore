@@ -41,3 +41,4 @@ application.yml
 !application-example.yml
 
 **/test/
+/uploads/profile

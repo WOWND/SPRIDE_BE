@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import sprideapp.spride.exception.SignupRequiredException;
@@ -20,13 +21,14 @@ import java.util.Optional;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class KakaoService {
 
     @Value("${kakao.client_id}")
     private String clientId;
 
-    @Value("${app.domain}")
-    private String serverUrl;
+    @Value("${app.default-profile}")
+    private String defaultProfile;
 
 
 
@@ -78,7 +80,7 @@ public class KakaoService {
 
         //기본 프사라면 우리의 기본 프사를 등록
         if (userInfo.getKakaoAccount().getProfile().getIsDefaultImage()) {
-            //userInfo.getKakaoAccount().getProfile().setProfileImageUrl(serverUrl + "/images/profile/default_image.jpg");
+            userInfo.getKakaoAccount().getProfile().setProfileImageUrl(defaultProfile);
         }
         log.info("[ getUserInfo ] Auth ID ---> {} ", userInfo.getId());
         log.info("[ getUserInfo ] NickName ---> {} ", userInfo.getKakaoAccount().getProfile().getNickName());
@@ -88,6 +90,7 @@ public class KakaoService {
     }
 
     //로그인
+    @Transactional(readOnly = true)
     public LoginResult login(String code) {
         log.info("==============================={}",code);
         String kakaoAccessToken = getAccessTokenFromKakao(code);

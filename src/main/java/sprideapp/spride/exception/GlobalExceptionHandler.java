@@ -3,10 +3,12 @@ package sprideapp.spride.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import sprideapp.spride.member.auth.kakao.dto.SignupInitResponse;
 
 import java.time.LocalDateTime;
@@ -36,6 +38,13 @@ public class GlobalExceptionHandler {
                 "message", e.getMessage(),
                 "path", request.getRequestURI()
         ));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<String> handleFileSizeException(MaxUploadSizeExceededException e) {
+        return ResponseEntity
+                .status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body("파일 크기가 너무 큽니다. 최대 5MB까지 허용됩니다.");
     }
 
     @ExceptionHandler(SignupRequiredException.class)
