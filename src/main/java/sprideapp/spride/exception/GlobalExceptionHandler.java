@@ -58,13 +58,13 @@ public class GlobalExceptionHandler {
     }
 
 
-
     private String getTemporaryCookie(String temporaryToken) {
         return ResponseCookie.from("accessToken", temporaryToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
                 .maxAge(60 * 5) //5분
+                .sameSite("None")
                 .build()
                 .toString();
     }

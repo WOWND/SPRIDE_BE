@@ -19,7 +19,11 @@ public class SecurityConfig {
     private static final String[] WHITE_LIST = {
             "/api/auth/kakao/login",
             "/api/auth/kakao/me",
+            "/api/auth/kakao/test",
+            "/api/articles/**",
+            "/api/comments/**",
             "/images/**",
+            "/api/shuttles/**",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",

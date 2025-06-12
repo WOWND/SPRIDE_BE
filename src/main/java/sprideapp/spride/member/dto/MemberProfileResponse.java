@@ -1,7 +1,9 @@
-package sprideapp.spride.member;
+package sprideapp.spride.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import sprideapp.spride.member.Level;
+import sprideapp.spride.member.Member;
 
 @Getter
 @AllArgsConstructor

@@ -104,7 +104,7 @@ public class KakaoService {
             String accessToken = jwtProvider.createAccessToken(member.getId());
             String refreshToken = jwtProvider.createAccessToken(member.getId());
 
-            LoginResponse response = LoginResponse.from(member);
+            LoginResponse response = LoginResponse.from(member/*, accessToken*/);
 
             return new LoginResult(accessToken, refreshToken, response);
         } else { //회원 가입 필요
@@ -123,8 +123,21 @@ public class KakaoService {
 
         String accessToken = jwtProvider.createAccessToken(member.getId());
         String refreshToken = jwtProvider.createAccessToken(member.getId());
-        LoginResponse response = LoginResponse.from(member);
+        LoginResponse response = LoginResponse.from(member/*, accessToken*/);
 
         return new LoginResult(accessToken, refreshToken, response);
     }
+
+    //테스트용입니다
+    public String test() {
+        Member member = Member.builder()
+                .kakaoId(4291667192L)
+                .introText("안녕하십니까!!")
+                .nickname("테스트용")
+                .profileUrl("https://api.wownd.store/images/profile/default_image.jpg")
+                .build();
+        Member save = memberRepository.save(member);
+        return jwtProvider.createAccessToken(save.getId());
+    }
+
 }

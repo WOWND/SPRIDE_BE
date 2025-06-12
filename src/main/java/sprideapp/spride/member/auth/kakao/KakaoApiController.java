@@ -13,6 +13,7 @@ import sprideapp.spride.member.MemberService;
 import sprideapp.spride.member.auth.kakao.dto.KakaoSignupRequest;
 import sprideapp.spride.member.auth.kakao.dto.LoginResponse;
 import sprideapp.spride.member.auth.kakao.dto.LoginResult;
+import sprideapp.spride.security.JwtProvider;
 
 import java.net.URI;
 
@@ -49,22 +50,32 @@ public class KakaoApiController {
                 .body(result.getLoginResponse());
     }
 
+    @PostMapping("/test")
+    public ResponseEntity<Void> test() {
+        String accessToken = kakaoService.test();
+        return ResponseEntity.status(200)
+                .header(HttpHeaders.SET_COOKIE,
+                        getAccessCookie(accessToken))
+                .build();
+    }
+
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal Long kakaoId) {
-
         String expiredAccessToken = ResponseCookie.from("accessToken", "")
                 .httpOnly(true)
-                .secure(false)       // HTTPS 환경이라면 true로!
+                .secure(true)       // HTTPS 환경이라면 true로!
                 .path("/")           // 생성 시와 동일한 path
                 .maxAge(0)           // 0초 → 즉시 만료
+                .sameSite("none")
                 .build()
                 .toString();
 
         String expiredRefreshToken = ResponseCookie.from("refreshToken", "")
                 .httpOnly(true)
-                .secure(false)       // HTTPS 환경이라면 true로!
+                .secure(true)       // HTTPS 환경이라면 true로!
                 .path("/")           // 생성 시와 동일한 path
                 .maxAge(0)           // 0초 → 즉시 만료
+                .sameSite("none")
                 .build()
                 .toString();
 
@@ -79,7 +90,7 @@ public class KakaoApiController {
 
     //로그인 확인
     @GetMapping("/me")
-    public ResponseEntity<Void> kakaoSignup(@AuthenticationPrincipal Long memberId) {
+    public ResponseEntity<Void> loginCheck(@AuthenticationPrincipal Long memberId) {
         return ResponseEntity.status(200).build();
     }
 
@@ -87,18 +98,20 @@ public class KakaoApiController {
     private String getAccessCookie(String accessToken) {
         return ResponseCookie.from("accessToken", accessToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
-                .maxAge(60 * 60) //1시간
+                //.maxAge(60 * 60) //1시간
+                .sameSite("none")
                 .build()
                 .toString();
     }
     private String getRefreshCookie(String refreshToken) {
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)
                 .path("/")
-                .maxAge(60 * 60 * 24 * 14) //14일
+                //.maxAge(60 * 60 * 24 * 14) //14일
+                .sameSite("none")
                 .build()
                 .toString();
     }

@@ -3,6 +3,11 @@ package sprideapp.spride.member;
 
 import jakarta.persistence.*;
 import lombok.*;
+import sprideapp.spride.article.Article;
+import sprideapp.spride.comment.Comment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,6 +24,12 @@ public class Member {
     private Level level;
     private Long kakaoId;
     private String introText;
+
+    @OneToMany(mappedBy = "member")
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<Article> articles = new ArrayList<>();
 
 
     @Builder

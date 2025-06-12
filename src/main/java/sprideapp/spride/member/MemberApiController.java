@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sprideapp.spride.member.dto.MemberProfileResponse;
 import sprideapp.spride.member.dto.UpdateProfileRequest;
 
 import java.util.HashMap;
